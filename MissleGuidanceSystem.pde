@@ -85,6 +85,9 @@ double missile_d_to_impact = 0.0;
 double drone_t_to_impact = 0.0;
 double missile_t_to_impact = 0.0;
 
+int time_to_impact = 0;
+int i = 0;
+
 int timer = 0; // time it takes for drone to pass between radars
 int tens = 0;
 int ones = 0;
@@ -154,7 +157,7 @@ double timeToImpact(double d, double v){
    return d / v;
 }
 
-int toMiliseconds(double time) {  // time cannot be greater than 99.99 seconds
+int toMilliseconds(double time) {  // time cannot be greater than 99.99 seconds
    return (int)time * 100;
 }
 
@@ -244,6 +247,7 @@ void loop() {
      
      
      timer = 0; // reset timer to 0 in anticipation of next timing state
+     i = 0; // reset iterator for use
    
      // radar A triggered - transition timing state  
      if(SW1_state == HIGH) {state = 1;}
@@ -264,7 +268,7 @@ void loop() {
      
      // this is for development diagnostics, 
      // REMOVE BEFORE PRODUCTION TO CONSERVE GREATEST TIMING ACCURACY
-     displayTimer(timer);
+     displayTime(timer);
    
      // radar B triggered - transition calculation state
      if(SW2_state == HIGH) {state = 2;}
@@ -298,9 +302,44 @@ void loop() {
        
        missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
        
+     } else {                                  // if drone_speed > MACHII display message and go to waiting
+       IOShieldOled.clear();   
+       IOShieldOled.setCursor(0, 0);
+       IOShieldOled.putString("Drone to Fast"); 
+       
+       delay(3000);
+       
+       state = 0;
      }
  
      state = 3;
+     
+     break;
+     
+   case 3: // launch state
+   
+     if(drone_t_to_impact == missile_t_to_impact) {
+
+       do {
+         time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once  
+       } while(++i == 0); 
+       
+     } else {
+       
+       IOShieldOled.clear();   
+       IOShieldOled.setCursor(0, 0);
+       IOShieldOled.putString("Something went wrong");
+       
+     }
+     
+       IOShieldOled.clear();   
+       IOShieldOled.setCursor(0, 0);
+       IOShieldOled.putString("Impact in:");
+       
+       displayTime(time_to_impact);
+       time_to_impact--;
+   
+     break;
      
   }
    
