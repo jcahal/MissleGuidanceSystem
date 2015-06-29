@@ -98,7 +98,7 @@ int loadingStep = 0; // for use in loadingAnimation();
 
 int state = 0;
 
-// Functions \\
+// Functions
 /*
 *  double calcDroneSpeed(int time) - speed from time in miliseconds, uses distance between radar A and B
 *
@@ -112,9 +112,9 @@ int state = 0;
 *
 *  double calcImpactY(double x) - y coordinate at time of impact
 *
-*  double distanceToImpact(double a, double b) - uses pythagorean theorem to find distance to impact
+*  double distanceTo(double a, double b) - uses pythagorean theorem to find distance to impact
 *
-*  double timeToImpact(double d, double v) - time to travel distance
+*  double timeTo(double d, double v) - time to travel distance
 *
 *  int toMiliseconds(double time) - converts a time to miliseconds
 *
@@ -126,7 +126,7 @@ int state = 0;
 */
 
 double calcDroneSpeed(int time) {
-   return D_ATOB / toSeconds(time); // need to covert time 
+   return D_ATOB / (double)time; // need to covert time 
 }
 
 double calcDroneVelocityX(double s){
@@ -153,7 +153,7 @@ double distanceTo(double a, double b){
    return sqrt(pow(a, 2) + pow(b, 2));
 }
 
-double timeToImpact(double d, double v){
+double timeTo(double d, double v){
    return d / v;
 }
 
@@ -162,7 +162,7 @@ int toMilliseconds(double time) {  // time cannot be greater than 99.99 seconds
 }
 
 double toSeconds(int time) {
-   return ((double)time) / 1000.00;
+   return ((double)time) / 100.00;
 }
 
 void displayTime(int time) {    // int time must be given in milliseconds
@@ -192,7 +192,7 @@ void loadingAnimation() {
 void setup() {
      
   // Pin I/O declarations
-  pinMode(sysLED, OUTPUT);
+  pinMode(sysLED, OUTPUT); // may or may not use
   pinMode(LD1, OUTPUT);
   pinMode(LD2, OUTPUT);
   
@@ -280,19 +280,21 @@ void loop() {
      IOShieldOled.setCursor(0, 0);
      IOShieldOled.putString("Calculating");
      
-     drone_speed = calcDroneSpeed(timer);
+     drone_speed = calcDroneSpeed(toSeconds(timer));
+  
+     delay(5000);   
      
      if(drone_speed < MACHII) {
        
        drone_velocity_x = calcDroneVelocityX(drone_speed);
       
-       missile_launch_angle calcLaunchAngle(drone_velocity_x);
+       missile_launch_angle = calcLaunchAngle(drone_velocity_x);
        
-       missile_slope calcMissileSlope(missile_launch_angle);
+       missile_slope = calcMissileSlope(missile_launch_angle);
        
        impact_x = calcImpactX(missile_slope);
         
-       impact_y calcImpactY(impact_x);
+       impact_y = calcImpactY(impact_x);
        
        drone_d_to_impact = distanceTo((impact_x - 7), (impact_y - 8));
         
@@ -313,6 +315,8 @@ void loop() {
      }
  
      state = 3;
+     
+     if(SW1_state == LOW) {state = 0;}
      
      break;
      
@@ -338,6 +342,8 @@ void loop() {
        
        displayTime(time_to_impact);
        time_to_impact--;
+       
+       if(SW1_state == LOW) {state = 0;}
    
      break;
      
