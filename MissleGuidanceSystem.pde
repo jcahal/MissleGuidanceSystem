@@ -125,44 +125,44 @@ int state = 0;
 *  void loadingAnimation() - displays a loading animation
 */
 
-double calcDroneSpeed(int time) {
-   return D_ATOB / (double)time; // need to covert time 
+double calcDroneSpeed(double time) {
+    return D_ATOB / time; // need to covert time
 }
 
 double calcDroneVelocityX(double s){
-   return s * cos(THETA_DRONE); 
+    return s * cos((THETA_DRONE * PI) / 180.00);
 }
 
 double calcLaunchAngle(double vector) {
-   return acos(vector/MACHII);
+    return acos(((vector/MACHII) * PI) / 180.00);
 }
 
 double calcMissileSlope(double theta){
-   return tan(theta);
+    return tan(theta);
 }
 
 double calcImpactX(double slope){
-   return (slope - 1.0) / ((slope * 7.0) - 1.0);
+    return (slope - 1.0) / ((slope * 7.0) - 1.0);
 }
 
 double calcImpactY(double x){
-   return x + 1;
+    return x + 1;
 }
 
 double distanceTo(double a, double b){
-   return sqrt(pow(a, 2) + pow(b, 2));
+    return sqrt(pow(a, 2) + pow(b, 2));
 }
 
 double timeTo(double d, double v){
-   return d / v;
+    return d / v;
 }
 
 int toMilliseconds(double time) {  // time cannot be greater than 99.99 seconds
-   return (int)time * 100;
+    return (int)(time * 1000);
 }
 
 double toSeconds(int time) {
-   return ((double)time) / 100.00;
+    return ((double)time) / 1000.00;
 }
 
 void displayTime(int time) {    // int time must be given in milliseconds
