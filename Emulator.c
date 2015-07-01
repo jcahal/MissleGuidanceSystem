@@ -18,7 +18,19 @@ double missile_d_to_impact = 0.0;
 double drone_t_to_impact = 0.0;
 double missile_t_to_impact = 0.0;
 
+double time_to_impact = 0.0;
+
+double foo = 0.0;
+
 int timer = 15000; // time it takes for drone to pass between radars
+int tens = 0;
+int ones = 0;
+int tenths = 0;
+int hundredths = 0;
+
+int loadingStep = 0; // for use in loadingAnimation();
+
+int state = 0;
 
 
 double calcDroneSpeed(double time) {
