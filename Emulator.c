@@ -18,19 +18,7 @@ double missile_d_to_impact = 0.0;
 double drone_t_to_impact = 0.0;
 double missile_t_to_impact = 0.0;
 
-double time_to_impact = 0.0;
-
-double foo = 0.0;
-
 int timer = 15000; // time it takes for drone to pass between radars
-int tens = 0;
-int ones = 0;
-int tenths = 0;
-int hundredths = 0;
-
-int loadingStep = 0; // for use in loadingAnimation();
-
-int state = 0;
 
 
 double calcDroneSpeed(double time) {
@@ -96,8 +84,9 @@ int main() {
 
     missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
 
-    /* Debug statements
+    //Debug statements
     printf("Drone Speed: %f\n", drone_speed);
+    printf("MACHII: %f\n", MACHII);
     printf("Drone Vx: %f\n", drone_velocity_x);
     printf("Missile Launch Angle  %f\n", missile_launch_angle);
     printf("Missile Slope: %f\n", missile_slope);
@@ -107,15 +96,21 @@ int main() {
     printf("Missile D to Impact: %f\n", missile_d_to_impact);
     printf("Drone t to Impact: %f\n", drone_t_to_impact);
     printf("Missile t to Impact: %f\n", missile_t_to_impact);
-     */
+    printf("Time to impact: %d\n", toMilliseconds(round(missile_t_to_impact * 100.00) / 100.00));
+
+    if(drone_speed < MACHII) {
+        printf("drone_speed < MACHII");
+    } else {
+        printf("drone_speed > MACHII");
+    }
 
     if((round(drone_t_to_impact * 100) / 100) == (round(missile_t_to_impact * 100) / 100)) {
         time_to_impact = round(missile_t_to_impact * 100) / 100;
 
-        while(time_to_impact > 0.0) {
-            printf("%f\n", time_to_impact);
-            time_to_impact = time_to_impact - 0.01;
-        }
+        //while(time_to_impact > 0.0) {
+           // printf("%f\n", time_to_impact);
+            //time_to_impact = time_to_impact - 0.01;
+        //}
 
         printf("\n");
         printf("It's a Hit!!");

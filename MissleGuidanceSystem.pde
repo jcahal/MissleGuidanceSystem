@@ -30,6 +30,7 @@
 *    For missile to hit drone x(missile) == x(drone)
 *
 *  TODO:
+*    Fix the if(drone_speed < MACHII) statement
 *    DECLARE VICTORY!! STATE 4
 *
 *
@@ -267,7 +268,7 @@ void loop() {
      
      drone_speed = calcDroneSpeed(toSeconds(timer));
      
-     if(drone_speed < MACHII) {
+     if(drone_speed < MACHII) {    // this if statement is not working
 
          drone_velocity_x = calcDroneVelocityX(drone_speed);
 
