@@ -18,8 +18,7 @@ double missile_d_to_impact = 0.0;
 double drone_t_to_impact = 0.0;
 double missile_t_to_impact = 0.0;
 
-int time_to_impact = 0;
-int i = 0;
+double time_to_impact = 0.0;
 
 double foo = 0.0;
 
@@ -43,15 +42,15 @@ double calcDroneVelocityX(double s){
 }
 
 double calcLaunchAngle(double vector) {
-    return acos(((vector/MACHII) * PI) / 180.00);
+    return acos(vector/MACHII) * (180.00 / PI);
 }
 
 double calcMissileSlope(double theta){
-    return tan(theta);
+    return tan((theta * PI) / 180.00);
 }
 
 double calcImpactX(double slope){
-    return (slope - 1.0) / ((slope * 7.0) - 1.0);
+    return ((slope * 7.0) + 1.0) / (slope - 1.0);
 }
 
 double calcImpactY(double x){
@@ -97,14 +96,7 @@ int main() {
 
     missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
 
-
-    printf("%f\n", toSeconds(15626));
-    printf("%d\n", toMilliseconds(15.626));
-
-    foo = drone_velocity_x / MACHII;
-
-    printf("%f\n", acos(foo));
-
+    /* Debug statements
     printf("Drone Speed: %f\n", drone_speed);
     printf("Drone Vx: %f\n", drone_velocity_x);
     printf("Missile Launch Angle  %f\n", missile_launch_angle);
@@ -115,7 +107,17 @@ int main() {
     printf("Missile D to Impact: %f\n", missile_d_to_impact);
     printf("Drone t to Impact: %f\n", drone_t_to_impact);
     printf("Missile t to Impact: %f\n", missile_t_to_impact);
+     */
 
-    printf("%f\n",2.828/toSeconds(timer));
+    if((round(drone_t_to_impact * 100) / 100) == (round(missile_t_to_impact * 100) / 100)) {
+        time_to_impact = round(missile_t_to_impact * 100) / 100;
 
+        while(time_to_impact > 0.0) {
+            printf("%f\n", time_to_impact);
+            time_to_impact = time_to_impact - 0.01;
+        }
+
+        printf("\n");
+        printf("It's a Hit!!");
+    } else {printf("we got issues");}
 }

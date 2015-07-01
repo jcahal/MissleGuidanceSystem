@@ -1,5 +1,5 @@
 /*
-*  Missle Gudance System 
+*  Missile Gudance System
 *  
 *  Jonathan Cahal
 *  
@@ -8,8 +8,6 @@
 *  Track a drone between radars and fire a missle to knock it out of the sky ninja style.
 *
 *  Given information:
-*
-*  
 *    Radar A position: (5, 0)
 *    Radar B position: (7, 0)
 *
@@ -32,23 +30,10 @@
 *    For missile to hit drone x(missile) == x(drone)
 *
 *  TODO:
-*    Get time of drone between radar A and radar B. DONE
-*    Calculate speed of drone. DONE
-*    Calculate the velocity of drone in x direction. DONE
-*    Calculate launch angle of missile (theta2). DONE
-*    Calculate missiles linear slope. DONE
-*    Calculate x coordinate at time of impact. DONE
-*    Calculate y coordinate at time of impact. DONE
-*    Calculate drone distance to coordinate of impact. DONE
-*    Calculate missile distance to coordinate of impact. DONE
-*    Calculate time for drone to reach coordinate of impact. DONE
-*    Calculate time for missile to reach coordinate of impact. DONE
-*    Verify time for drone to reach impact coordinate (t1) == time for missile to reach coordinate of impact (t2). STATE 3
 *    DECLARE VICTORY!! STATE 4
 *
 *
 *  Constraints:
-*    
 *    Drone must be traveling < MACHII or missile can't catch it
 */
 
@@ -134,15 +119,15 @@ double calcDroneVelocityX(double s){
 }
 
 double calcLaunchAngle(double vector) {
-    return acos(((vector/MACHII) * PI) / 180.00);
+    return acos(vector/MACHII) * (180.00 / PI);
 }
 
 double calcMissileSlope(double theta){
-    return tan(theta);
+    return tan((theta * PI) / 180.00);
 }
 
 double calcImpactX(double slope){
-    return (slope - 1.0) / ((slope * 7.0) - 1.0);
+    return ((slope * 7.0) + 1.0) / (slope - 1.0);
 }
 
 double calcImpactY(double x){
@@ -281,28 +266,26 @@ void loop() {
      IOShieldOled.putString("Calculating");
      
      drone_speed = calcDroneSpeed(toSeconds(timer));
-  
-     delay(5000);   
      
      if(drone_speed < MACHII) {
-       
-       drone_velocity_x = calcDroneVelocityX(drone_speed);
-      
-       missile_launch_angle = calcLaunchAngle(drone_velocity_x);
-       
-       missile_slope = calcMissileSlope(missile_launch_angle);
-       
-       impact_x = calcImpactX(missile_slope);
-        
-       impact_y = calcImpactY(impact_x);
-       
-       drone_d_to_impact = distanceTo((impact_x - 7), (impact_y - 8));
-        
-       missile_d_to_impact = distanceTo((impact_x - 7), impact_y);
-       
-       drone_t_to_impact = timeTo(drone_d_to_impact, drone_speed);
-       
-       missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
+
+         drone_velocity_x = calcDroneVelocityX(drone_speed);
+
+         missile_launch_angle = calcLaunchAngle(drone_velocity_x);
+
+         missile_slope = calcMissileSlope(missile_launch_angle);
+
+         impact_x = calcImpactX(missile_slope);
+
+         impact_y = calcImpactY(impact_x);
+
+         drone_d_to_impact = distanceTo((impact_x - 7), (impact_y - 8));
+
+         missile_d_to_impact = distanceTo((impact_x - 7), impact_y);
+
+         drone_t_to_impact = timeTo(drone_d_to_impact, drone_speed);
+
+         missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
        
      } else {                                  // if drone_speed > MACHII display message and go to waiting
        IOShieldOled.clear();   
@@ -322,11 +305,18 @@ void loop() {
      
    case 3: // launch state
    
-     if(drone_t_to_impact == missile_t_to_impact) {
+     if(round((drone_t_to_impact * 100) / 100) == (round(missile_t_to_impact * 100) / 100) { // round to the hundredth place
 
        do {
          time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once  
-       } while(++i == 0); 
+       } while(++i == 0);
+
+         IOShieldOled.clear();
+         IOShieldOled.setCursor(0, 0);
+         IOShieldOled.putString("Impact in:");
+
+         displayTime(time_to_impact);
+         time_to_impact--;
        
      } else {
        
@@ -335,13 +325,6 @@ void loop() {
        IOShieldOled.putString("Something went wrong");
        
      }
-     
-       IOShieldOled.clear();   
-       IOShieldOled.setCursor(0, 0);
-       IOShieldOled.putString("Impact in:");
-       
-       displayTime(time_to_impact);
-       time_to_impact--;
        
        if(SW1_state == LOW) {state = 0;}
    
