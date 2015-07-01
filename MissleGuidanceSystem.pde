@@ -30,7 +30,6 @@
 *    For missile to hit drone x(missile) == x(drone)
 *
 *  TODO:
-*    Fix the if(drone_speed < MACHII) statement
 *    DECLARE VICTORY!! STATE 4
 *
 *
@@ -152,21 +151,21 @@ double toSeconds(int time) {
 }
 
 void displayTime(int time) {    // int time must be given in milliseconds
-   tens = (time % 10000) / 1000;
-   ones = (time % 1000) / 100;
-   tenths = (time % 100) / 10;
-   hundredths = time % 10;
-  
-   IOShieldOled.setCursor(1, 1); // tens
-   IOShieldOled.putChar(tens + 48); // + 48 to convert to ASCII
-   IOShieldOled.setCursor(2, 1); // ones
-   IOShieldOled.putChar(ones + 48); // + 48 to convert to ASCII
-   IOShieldOled.setCursor(3, 1); // deci
-   IOShieldOled.putChar('.'); // + 48 to convert to ASCII
-   IOShieldOled.setCursor(4, 1); // thenths
-   IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
-   IOShieldOled.setCursor(5, 1); // hundredths
-   IOShieldOled.putChar(hundredths + 48); // + 48 to convert to ASCII
+    tens = (time % 10000) / 1000;
+    ones = (time % 1000) / 100;
+    tenths = (time % 100) / 10;
+    hundredths = time % 10;
+
+    IOShieldOled.setCursor(1, 1); // tens
+    IOShieldOled.putChar(tens + 48); // + 48 to convert to ASCII
+    IOShieldOled.setCursor(2, 1); // ones
+    IOShieldOled.putChar(ones + 48); // + 48 to convert to ASCII
+    IOShieldOled.setCursor(3, 1); // deci
+    IOShieldOled.putChar('.'); // + 48 to convert to ASCII
+    IOShieldOled.setCursor(4, 1); // thenths
+    IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
+    IOShieldOled.setCursor(5, 1); // hundredths
+    IOShieldOled.putChar(hundredths + 48); // + 48 to convert to ASCII
 }
 
 // TODO - complete this prototype
@@ -176,169 +175,180 @@ void loadingAnimation() {
 
 // Setup function
 void setup() {
-     
-  // Pin I/O declarations
-  pinMode(sysLED, OUTPUT); // may or may not use
-  pinMode(LD1, OUTPUT);
-  pinMode(LD2, OUTPUT);
-  
-  pinMode(SW1, INPUT);
-  pinMode(SW1, INPUT);
-  
-  // Zero outputs
-  digitalWrite(LD1, LOW);
-  digitalWrite(LD2, LOW);
-  
-  // Display initalizers
-  IOShieldOled.begin();
-  IOShieldOled.setCursor(0, 0); 
-   
+
+    // Pin I/O declarations
+    pinMode(sysLED, OUTPUT); // may or may not use
+    pinMode(LD1, OUTPUT);
+    pinMode(LD2, OUTPUT);
+
+    pinMode(SW1, INPUT);
+    pinMode(SW1, INPUT);
+
+    // Zero outputs
+    digitalWrite(LD1, LOW);
+    digitalWrite(LD2, LOW);
+
+    // Display initalizers
+    IOShieldOled.begin();
+    IOShieldOled.setCursor(0, 0);
+
 } // end - setup()
 
 // Loop function
 void loop() {
-  
-  // System operational indication
-  //digitalWrite(sysLED, HIGH); // sysLED HIGH 
-  //delay(50);
-  
-  
-  // Map SW_states to SW's
-  SW1_state = digitalRead(SW1);
-  SW2_state = digitalRead(SW2);
-  
-  // Indicate SW_states on LD's
-  if(SW1_state == HIGH) {digitalWrite(LD1, HIGH);}
-  if(SW1_state == LOW) {digitalWrite(LD1, LOW);}
-  if(SW2_state == HIGH) {digitalWrite(LD2, HIGH);}
-  if(SW2_state == LOW) {digitalWrite(LD2, LOW);}
- 
-  
-  // State Machine
-  /*
-  *
-  *  State 0 - waiting state
-  *  State 1 - timing state
-  *  State 2 - calculation state
-  *  State 3 - launch state
-  *  State 4 - declare VICTORY!
-  *
-  */
-     
-  switch(state) {
-   case 0: // waiting state
-     IOShieldOled.clear();
-     IOShieldOled.setCursor(0, 0);
-     IOShieldOled.putString("Waiting"); 
-     
-     
-     timer = 0; // reset timer to 0 in anticipation of next timing state
-     i = 0; // reset iterator for use
-   
-     // radar A triggered - transition timing state  
-     if(SW1_state == HIGH) {state = 1;}
-     
-     break; // end - waiting state 
 
-   case 1: // timing state
-   
-     // this is for development diagnostics, 
-     // REMOVE BEFORE PRODUCTION TO CONSERVE GREATEST TIMING ACCURACY
-     IOShieldOled.clear();
-     IOShieldOled.setCursor(0, 0);
-     IOShieldOled.putString("Timing");
+    // System operational indication
+    //digitalWrite(sysLED, HIGH); // sysLED HIGH
+    //delay(50);
 
-     // clock at 1ms frequency    
-     delay(1);
-     timer++;
-     
-     // this is for development diagnostics, 
-     // REMOVE BEFORE PRODUCTION TO CONSERVE GREATEST TIMING ACCURACY
-     displayTime(timer);
-   
-     // radar B triggered - transition calculation state
-     if(SW2_state == HIGH) {state = 2;}
-   
-     break; // end - timing state
-     
-   case 2: // calculation state
-     IOShieldOled.clear();   
-     IOShieldOled.setCursor(0, 0);
-     IOShieldOled.putString("Calculating");
-     
-     drone_speed = calcDroneSpeed(toSeconds(timer));
-     
-     if(drone_speed < MACHII) {    // this if statement is not working
 
-         drone_velocity_x = calcDroneVelocityX(drone_speed);
+    // Map SW_states to SW's
+    SW1_state = digitalRead(SW1);
+    SW2_state = digitalRead(SW2);
 
-         missile_launch_angle = calcLaunchAngle(drone_velocity_x);
+    // Indicate SW_states on LD's
+    if(SW1_state == HIGH) {digitalWrite(LD1, HIGH);}
+    if(SW1_state == LOW) {digitalWrite(LD1, LOW);}
+    if(SW2_state == HIGH) {digitalWrite(LD2, HIGH);}
+    if(SW2_state == LOW) {digitalWrite(LD2, LOW);}
 
-         missile_slope = calcMissileSlope(missile_launch_angle);
 
-         impact_x = calcImpactX(missile_slope);
+    // State Machine
+    /*
+    *
+    *  State 0 - waiting state
+    *  State 1 - timing state
+    *  State 2 - calculation state
+    *  State 3 - launch state
+    *  State 4 - declare VICTORY!
+    *
+    */
 
-         impact_y = calcImpactY(impact_x);
+    switch(state) {
+        case 0: // waiting state
+            IOShieldOled.clear();
+            IOShieldOled.setCursor(0, 0);
+            IOShieldOled.putString("Waiting");
 
-         drone_d_to_impact = distanceTo((impact_x - 7), (impact_y - 8));
 
-         missile_d_to_impact = distanceTo((impact_x - 7), impact_y);
+            timer = 0; // reset timer to 0 in anticipation of next timing state
+            i = 0; // reset iterator for use
 
-         drone_t_to_impact = timeTo(drone_d_to_impact, drone_speed);
+            // radar A triggered - transition timing state
+            if(SW1_state == HIGH) {state = 1;}
 
-         missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
-       
-     } else {                                  // if drone_speed > MACHII display message and go to waiting
-       IOShieldOled.clear();   
-       IOShieldOled.setCursor(0, 0);
-       IOShieldOled.putString("Drone to Fast"); 
-       
-       delay(3000);
-       
-       state = 0;
-     }
- 
-     state = 3;
-     
-     if(SW1_state == LOW) {state = 0;}
-     
-     break;
-     
-   case 3: // launch state
-   
-     if(round((drone_t_to_impact * 100) / 100) == (round(missile_t_to_impact * 100) / 100)) { // round to the hundredth place
+            break; // end - waiting state
 
-       do {
-         time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once  
-       } while(++i == 0);
+        case 1: // timing state
 
-         IOShieldOled.clear();
-         IOShieldOled.setCursor(0, 0);
-         IOShieldOled.putString("Impact in:");
+            // this is for development diagnostics,
+            // REMOVE BEFORE PRODUCTION TO CONSERVE GREATEST TIMING ACCURACY
+            IOShieldOled.clear();
+            IOShieldOled.setCursor(0, 0);
+            IOShieldOled.putString("Timing");
 
-         displayTime(time_to_impact);
-         time_to_impact--;
-       
-     } else {
-       
-       IOShieldOled.clear();
-       IOShieldOled.setCursor(0, 0);
-       IOShieldOled.putString("Something went wrong");
-       
-     }
-       
-       if(SW1_state == LOW) {state = 0;}
-   
-     break;
-     
-  }
-   
-  
-  
-   // System operational indication
-   //digitalWrite(sysLED, LOW); // sysLED LOW 
-   //delay(50);
-   
-   IOShieldOled.updateDisplay();
-  
+            // clock at 1ms frequency
+            delay(1);
+            timer++;
+
+            // this is for development diagnostics,
+            // REMOVE BEFORE PRODUCTION TO CONSERVE GREATEST TIMING ACCURACY
+            displayTime(timer);
+
+            // radar B triggered - transition calculation state
+            if(SW2_state == HIGH) {state = 2;}
+
+            break; // end - timing state
+
+        case 2: // calculation state
+            IOShieldOled.clear();
+            IOShieldOled.setCursor(0, 0);
+            IOShieldOled.putString("Calculating");
+
+            drone_speed = calcDroneSpeed(toSeconds(timer));
+            displayTime(toMilliseconds(drone_speed));
+            delay(5000);
+
+            if(drone_speed < MACHII) {
+
+                drone_velocity_x = calcDroneVelocityX(drone_speed);
+
+                missile_launch_angle = calcLaunchAngle(drone_velocity_x);
+
+                missile_slope = calcMissileSlope(missile_launch_angle);
+
+                impact_x = calcImpactX(missile_slope);
+
+                impact_y = calcImpactY(impact_x);
+
+                drone_d_to_impact = distanceTo((impact_x - 7), (impact_y - 8));
+
+                missile_d_to_impact = distanceTo((impact_x - 7), impact_y);
+
+                drone_t_to_impact = timeTo(drone_d_to_impact, drone_speed);
+
+                missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
+
+            } else if(drone_speed > MACHII) {       // if drone_speed > MACHII display message and go to waiting
+                IOShieldOled.clear();
+                IOShieldOled.setCursor(0, 0);
+                IOShieldOled.putString("Drone to Fast");
+
+                delay(3000);
+
+                state = 0;
+            }
+
+            state = 3;
+
+            if(SW1_state == LOW) {state = 0;}
+
+            break;
+
+        case 3: // launch state
+
+            drone_t_to_impact = round(drone_t_to_impact * 100.00) / 100.00; // round to the hundredth place
+            missile_t_to_impact = round(missile_t_to_impact * 100.00) / 100.00; // round to the hundredth place
+
+            if(drone_t_to_impact == missile_t_to_impact) {
+
+                IOShieldOled.clear();
+                IOShieldOled.setCursor(0, 0);
+                IOShieldOled.putString("Hit!");
+
+                /* // Comment out for now
+                 if(i == 0) {
+                   time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once
+                   i++;
+                 }
+
+                 IOShieldOled.clear();
+                 IOShieldOled.setCursor(0, 0);
+                 IOShieldOled.putString("Impact in:");
+
+                 displayTime(time_to_impact);
+                 time_to_impact--;
+
+                */
+
+            } else {
+
+                IOShieldOled.clear();
+                IOShieldOled.setCursor(0, 0);
+                IOShieldOled.putString("Something went wrong");
+
+                state = 0;
+            }
+
+            state = 0;
+
+            break;
+    }
+
+    // System operational indication
+    //digitalWrite(sysLED, LOW); // sysLED LOW
+    //delay(50);
+
+    IOShieldOled.updateDisplay();
+
 } // end - loop()
