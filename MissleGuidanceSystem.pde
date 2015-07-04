@@ -285,9 +285,9 @@ void loop() {
 
                 missile_d_to_impact = distanceTo((impact_x - 7), impact_y);
 
-                drone_t_to_impact = timeTo(drone_d_to_impact, drone_speed);
+                drone_t_to_impact = round(timeTo(drone_d_to_impact, drone_speed) * 100) / 100;
 
-                missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
+                missile_t_to_impact = round(timeTo(missile_d_to_impact, MACHII) * 100) / 100;
 
             } else if(drone_speed > MACHII) {       // if drone_speed > MACHII display message and go to waiting
                 IOShieldOled.clear();
@@ -307,16 +307,13 @@ void loop() {
 
         case 3: // launch state
 
-            drone_t_to_impact = round(drone_t_to_impact * 100.00) / 100.00; // round to the hundredth place
-            missile_t_to_impact = round(missile_t_to_impact * 100.00) / 100.00; // round to the hundredth place
-
             if(drone_t_to_impact == missile_t_to_impact) {
 
                 IOShieldOled.clear();
                 IOShieldOled.setCursor(0, 0);
                 IOShieldOled.putString("Hit!");
 
-                /* // Comment out for now
+                 // Comment out for now
                  if(i == 0) {
                    time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once
                    i++;
@@ -327,9 +324,9 @@ void loop() {
                  IOShieldOled.putString("Impact in:");
 
                  displayTime(time_to_impact);
-                 time_to_impact--;
+                 //time_to_impact--;
 
-                */
+                delay(3000);
 
             } else {
 

@@ -1,5 +1,6 @@
 // External library includes
 #include <math.h>
+#include <stdio.h>
 
 // Other constant variables for calculations
 const double MACHII = 0.4267;
@@ -92,9 +93,9 @@ int main() {
 
     missile_d_to_impact = distanceTo((impact_x - 7), impact_y);
 
-    drone_t_to_impact = timeTo(drone_d_to_impact, drone_speed);
+    drone_t_to_impact = round(timeTo(drone_d_to_impact, drone_speed) * 100) / 100;
 
-    missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
+    missile_t_to_impact = round(timeTo(missile_d_to_impact, MACHII) * 100) / 100;
 
     //Debug statements
     printf("Drone Speed: %f\n", drone_speed);
@@ -106,18 +107,18 @@ int main() {
     printf("Impact Y: %f\n", impact_y);
     printf("Drone D to Impact: %f\n", drone_d_to_impact);
     printf("Missile D to Impact: %f\n", missile_d_to_impact);
-    printf("Drone t to Impact: %f\n", drone_t_to_impact);
-    printf("Missile t to Impact: %f\n", missile_t_to_impact);
+    printf("Drone t to Impact: %.20f\n", drone_t_to_impact);
+    printf("Missile t to Impact: %.20f\n", missile_t_to_impact);
     printf("Time to impact: %d\n", toMilliseconds(round(missile_t_to_impact * 100.00) / 100.00));
 
     if(drone_speed < MACHII) {
-        printf("drone_speed < MACHII");
+        printf("drone_speed < MACHII\n");
     } else {
-        printf("drone_speed > MACHII");
+        printf("drone_speed > MACHII\n");
     }
 
-    if((round(drone_t_to_impact * 100) / 100) == (round(missile_t_to_impact * 100) / 100)) {
-        time_to_impact = round(missile_t_to_impact * 100) / 100;
+    if(drone_t_to_impact  == missile_t_to_impact)    {
+        time_to_impact = missile_t_to_impact;
 
         //while(time_to_impact > 0.0) {
            // printf("%f\n", time_to_impact);
@@ -125,6 +126,6 @@ int main() {
         //}
 
         printf("\n");
-        printf("It's a Hit!!");
-    } else {printf("we got issues");}
+        printf("It's a Hit!!\n");
+    } else {printf("we got issues\n");}
 }
