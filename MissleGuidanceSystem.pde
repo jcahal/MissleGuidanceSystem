@@ -71,6 +71,7 @@ double missile_d_to_impact = 0.0;
 double drone_t_to_impact = 0.0;
 double missile_t_to_impact = 0.0;
 
+int launch_angle = 0;
 int time_to_impact = 0;
 int i = 0;
 
@@ -79,6 +80,7 @@ int tens = 0;
 int ones = 0;
 int tenths = 0;
 int hundredths = 0;
+int thousandths = 0;
 
 int loadingStep = 0; // for use in loadingAnimation();
 
@@ -144,11 +146,11 @@ double timeTo(double d, double v){
 }
 
 int toMilliseconds(double time) {  // time cannot be greater than 99.99 seconds
-    return (int)(time * 1000);
+    return (int)(time * 100);
 }
 
 double toSeconds(int time) {
-    return ((double)time) / 1000.00;
+    return ((double)time) / 100.00;
 }
 
 void displayTime(int time) {    // int time must be given in milliseconds
@@ -156,17 +158,21 @@ void displayTime(int time) {    // int time must be given in milliseconds
     ones = (time % 10000) / 1000;
     tenths = (time % 1000) / 100;
     hundredths = (time % 100) / 10;
+    thousandths = time % 10;
 
-    IOShieldOled.setCursor(1, 1); // tens
+    IOShieldOled.setCursor(0, 1); // tens
     IOShieldOled.putChar(tens + 48); // + 48 to convert to ASCII
-    IOShieldOled.setCursor(2, 1); // ones
+    IOShieldOled.setCursor(1, 1); // ones
     IOShieldOled.putChar(ones + 48); // + 48 to convert to ASCII
-    IOShieldOled.setCursor(3, 1); // deci
-    IOShieldOled.putChar('.'); // + 48 to convert to ASCII
-    IOShieldOled.setCursor(4, 1); // thenths
+    IOShieldOled.setCursor(2, 1);
     IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
-    IOShieldOled.setCursor(5, 1); // hundredths
+    IOShieldOled.setCursor(3, 1); // thenths
+    IOShieldOled.putChar('.');
+    IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
+    IOShieldOled.setCursor(4, 1); // hundredths
     IOShieldOled.putChar(hundredths + 48); // + 48 to convert to ASCII
+    IOShieldOled.putChar(thousandths + 48);
+    IOShieldOled.setCursor(5, 1);
 }
 
 // TODO - complete this prototype
@@ -293,6 +299,8 @@ void loop() {
 
                 missile_t_to_impact = timeTo(missile_d_to_impact, MACHII);
 
+                state = 3; // goto launch state
+
             } else if(drone_speed > MACHII) {       // if drone_speed > MACHII display message and go to waiting
 
                 IOShieldOled.clear();
@@ -301,10 +309,8 @@ void loop() {
 
                 delay(3000);
 
-                state = 0;
+                state = 0; // go to waiting state
             }
-
-            state = 3; // goto launch state
 
             break;
 
@@ -312,29 +318,39 @@ void loop() {
 
             drone_t_to_impact = round(drone_t_to_impact * 100.00) / 100.00; // round to the hundredth place
             missile_t_to_impact = round(missile_t_to_impact * 100.00) / 100.00; // round to the hundredth place
+            missile_launch_angle = round(missile_launch_angle * 100.00) / 100.00;
 
             if(drone_t_to_impact == missile_t_to_impact) {
 
+                launch_angle = toMilliseconds(missile_launch_angle);
+
                 IOShieldOled.clear();
                 IOShieldOled.setCursor(0, 0);
-                IOShieldOled.putString("It's a Hit!");
-
+                IOShieldOled.putString("Launch Angle:");
+                displayTime(launch_angle);
                 delay(2000);
 
                 // Comment out for now
-                /*if(i == 0) {
-                  time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once
-                  i++;
+                if(i == 0) {
+                    time_to_impact = toMilliseconds(missile_t_to_impact); // this will happen only once
+                    i++;
                 }
 
                 IOShieldOled.clear();
                 IOShieldOled.setCursor(0, 0);
                 IOShieldOled.putString("Impact in:");
 
-                displayTime(time_to_impact);
-                time_to_impact--;*/
+                while(time_to_impact > 0) {
 
+                    displayTime(time_to_impact);
+                    time_to_impact--;
+                }
 
+                IOShieldOled.clear();
+                IOShieldOled.setCursor(0, 0);
+                IOShieldOled.putString("It's a Hit!");
+
+                delay(2000);
 
             } else {
 
