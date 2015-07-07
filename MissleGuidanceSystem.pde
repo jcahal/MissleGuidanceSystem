@@ -47,6 +47,14 @@ const int sysLED = 13; // system operational LED
 const int LD1 = 70; // SW1 indicator
 const int LD2 = 71; // SW2 indicator
 
+const int LD3 = 72;
+const int LD4 = 73;
+const int LD5 = 74;
+const int LD6 = 75;
+const int LD7 = 76;
+const int LD8 = 77;
+
+
 const int SW1 = 2; // radar A - position: (5,0)
 const int SW2 = 7; // radar B - position: (7,0)
 
@@ -154,25 +162,22 @@ double toSeconds(int time) {
 }
 
 void displayTime(int time) {    // int time must be given in milliseconds
-    tens = time / 10000;
-    ones = (time % 10000) / 1000;
-    tenths = (time % 1000) / 100;
-    hundredths = (time % 100) / 10;
-    thousandths = time % 10;
+    tens = (time % 10000) / 1000;
+    ones = (time % 1000) / 100;
+    tenths = (time % 100) / 10;
+    hundredths = time % 10;
 
     IOShieldOled.setCursor(0, 1); // tens
     IOShieldOled.putChar(tens + 48); // + 48 to convert to ASCII
     IOShieldOled.setCursor(1, 1); // ones
     IOShieldOled.putChar(ones + 48); // + 48 to convert to ASCII
-    IOShieldOled.setCursor(2, 1);
-    IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
-    IOShieldOled.setCursor(3, 1); // thenths
+    IOShieldOled.setCursor(2, 1);// deci
     IOShieldOled.putChar('.');
+    IOShieldOled.setCursor(3, 1); // thenths
+    IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
     IOShieldOled.putChar(tenths + 48); // + 48 to convert to ASCII
     IOShieldOled.setCursor(4, 1); // hundredths
     IOShieldOled.putChar(hundredths + 48); // + 48 to convert to ASCII
-    IOShieldOled.putChar(thousandths + 48);
-    IOShieldOled.setCursor(5, 1);
 }
 
 // TODO - complete this prototype
@@ -186,6 +191,14 @@ void setup() {
     // Pin I/O declarations
     pinMode(LD1, OUTPUT);
     pinMode(LD2, OUTPUT);
+    pinMode(LD1, OUTPUT);
+    pinMode(LD2, OUTPUT);
+    pinMode(LD3, OUTPUT);
+    pinMode(LD4, OUTPUT);
+    pinMode(LD5, OUTPUT);
+    pinMode(LD6, OUTPUT);
+    pinMode(LD7, OUTPUT);
+    pinMode(LD8, OUTPUT);
 
     pinMode(SW1, INPUT);
     pinMode(SW1, INPUT);
@@ -193,6 +206,12 @@ void setup() {
     // Zero outputs
     digitalWrite(LD1, LOW);
     digitalWrite(LD2, LOW);
+    digitalWrite(LD3, LOW);
+    digitalWrite(LD4, LOW);
+    digitalWrite(LD5, LOW);
+    digitalWrite(LD6, LOW);
+    digitalWrite(LD7, LOW);
+    digitalWrite(LD8, LOW);
 
     // Display initalizers
     IOShieldOled.begin();
@@ -349,6 +368,31 @@ void loop() {
                 IOShieldOled.clear();
                 IOShieldOled.setCursor(0, 0);
                 IOShieldOled.putString("It's a Hit!");
+
+                digitalWrite(LD3, HIGH);
+                delay(50);
+                digitalWrite(LD4, HIGH);
+                delay(50);
+                digitalWrite(LD5, HIGH);
+                delay(50);
+                digitalWrite(LD6, HIGH);
+                delay(50);
+                digitalWrite(LD7, HIGH);
+                delay(50);
+                digitalWrite(LD8, HIGH);
+                delay(50);
+                digitalWrite(LD8, LOW);
+                delay(50);
+                digitalWrite(LD7, LOW);
+                delay(50);
+                digitalWrite(LD6, LOW);
+                delay(50);
+                digitalWrite(LD5, LOW);
+                delay(50);
+                digitalWrite(LD4, LOW);
+                delay(50);
+                digitalWrite(LD3, LOW);
+                delay(50);
 
                 delay(2000);
 
