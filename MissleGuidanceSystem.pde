@@ -2,6 +2,9 @@
 *  Missile Gudance System
 *
 *  Jonathan Cahal
+*  Chase Cook
+* Hannah Van Den Bosch
+* Kyle Ferguson
 *
 *  CSC 230 Summer 2015
 *
@@ -28,10 +31,6 @@
 *    Missile x coordinate: x(missile) = x2 + vx * t, (7 + (MACHII * cos(theta2)) * t)
 *
 *    For missile to hit drone x(missile) == x(drone)
-*
-*  TODO:
-*    DECLARE VICTORY!! STATE 4
-*
 *
 *  Constraints:
 *    Drone must be traveling < MACHII or missile can't catch it
@@ -294,6 +293,10 @@ void loop() {
 
             drone_speed = calcDroneSpeed(toSeconds(timer));
 
+            IOShieldOled.clear();
+            IOShieldOled.setCursor(0, 0);
+            IOShieldOled.putString("Drone Speed");
+
             drone_speed = calcDroneSpeed(toSeconds(timer));
             displayTime(toMilliseconds(drone_speed));
             delay(3000);
@@ -369,32 +372,7 @@ void loop() {
                 IOShieldOled.setCursor(0, 0);
                 IOShieldOled.putString("It's a Hit!");
 
-                digitalWrite(LD3, HIGH);
-                delay(50);
-                digitalWrite(LD4, HIGH);
-                delay(50);
-                digitalWrite(LD5, HIGH);
-                delay(50);
-                digitalWrite(LD6, HIGH);
-                delay(50);
-                digitalWrite(LD7, HIGH);
-                delay(50);
-                digitalWrite(LD8, HIGH);
-                delay(50);
-                digitalWrite(LD8, LOW);
-                delay(50);
-                digitalWrite(LD7, LOW);
-                delay(50);
-                digitalWrite(LD6, LOW);
-                delay(50);
-                digitalWrite(LD5, LOW);
-                delay(50);
-                digitalWrite(LD4, LOW);
-                delay(50);
-                digitalWrite(LD3, LOW);
-                delay(50);
-
-                delay(2000);
+                state = 4;
 
             } else {
 
@@ -405,7 +383,36 @@ void loop() {
                 state = 0;
             }
 
-            state = 0;
+            break;
+
+        case 4:
+
+            digitalWrite(LD3, HIGH);
+            delay(20);
+            digitalWrite(LD4, HIGH);
+            delay(20);
+            digitalWrite(LD5, HIGH);
+            delay(20);
+            digitalWrite(LD6, HIGH);
+            delay(20);
+            digitalWrite(LD7, HIGH);
+            delay(20);
+            digitalWrite(LD8, HIGH);
+            delay(20);
+            digitalWrite(LD8, LOW);
+            delay(20);
+            digitalWrite(LD7, LOW);
+            delay(20);
+            digitalWrite(LD6, LOW);
+            delay(20);
+            digitalWrite(LD5, LOW);
+            delay(20);
+            digitalWrite(LD4, LOW);
+            delay(20);
+            digitalWrite(LD3, LOW);
+            delay(20);
+
+            if(SW1_state == LOW and SW2_state == LOW) {state = 0;}
 
             break;
     } // end - switch(state)
